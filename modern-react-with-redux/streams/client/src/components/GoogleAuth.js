@@ -1,4 +1,5 @@
 import React from 'react';
+import clientId from '../keys/googleAuthKeys';
 
 class GoogleAuth extends React.Component {
 
@@ -8,15 +9,20 @@ class GoogleAuth extends React.Component {
         window.gapi.load('client:auth2', () => {
             window.gapi.client
                 .init({
-                    clientId: '172926852787-vec1vjt86nkqgd5uckfb3jbd8dpk45qj.apps.googleusercontent.com',
+                    clientId: clientId,
                     scope: 'email'
                 })
                 .then(() => {
                     this.auth = window.gapi.auth2.getAuthInstance();
                     this.setState({ isSignedIn: this.auth.isSignedIn.get() });
+                    this.auth.isSignedIn.listen(this.onAuthChange);
                 });
         });
     }
+
+    onAuthChange = () => {
+        this.setState({ isSignedIn: this.auth.isSignedIn.get() });
+    };
 
     renderAuthButton() {
         if (this.state.isSignedIn === null) {
